@@ -4,7 +4,7 @@ var express       = require('express');
 var bodyParser    = require('body-parser');
 var expect        = require('chai').expect;
 var cors          = require('cors');
-const MongoClient = require('mongodb').MonogClient;
+const MongoClient = require('mongodb').MongoClient;
 const helmet      = require('helmet');
 
 var apiRoutes         = require('./routes/api.js');
