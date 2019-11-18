@@ -15,7 +15,7 @@ module.exports = function (app, db) {
   
   app.route('/api/threads/:board')
   .post(function(req, res){
-    //db.findAndModify
+    db.updateOne
   })
     
   app.route('/api/replies/:board');
