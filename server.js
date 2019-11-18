@@ -55,7 +55,7 @@ MongoClient.connect(process.env.DB, {useUnifiedTopology: true}, function(err, cl
   });
   
   //Routing for API 
-  apiRoutes(app, client.db('board'));
+  apiRoutes(app, client.db('anon_msg_board'));
   
 })
 
