@@ -75,20 +75,23 @@ module.exports = function (app, db) {
   app.route('/api/replies/:board')
   
   .post(function(req, res){
-    var board = req.params.board;
-    bcrypt.hash(req.body.delete_password, saltRounds, (err, hash) => {
+    var board = req.params.board,
+        _id = req.body.thread_id,
+        text = req.body.reply_text,
+        password = req.body.delete_password;
+    bcrypt.hash(password, saltRounds, (err, hash) => {
       db.collection('boards')
       .updateOne(
         {
           board,
-          'threads._id': ObjectId(req.body._id)
+          'threads._id': ObjectId(_id)
         },
         {
           $push: {
             'threads.$.replies': {
               _id: new ObjectId(),
               crated_on: new Date(),
-              text: req.body.text,
+              text,
               password: hash,
               reported: false
             }
@@ -96,9 +99,13 @@ module.exports = function (app, db) {
           $set: {bumped_on: new Date()}
         }
       )
-      .then(()=>res.redirect(`/b/${board}/${req.body._id}`))
+      .then(()=>res.redirect(`/b/${board}/${_id}`))
       .catch(err=>res.json(err))
     })
+  })
+  
+  .get(function(req, res){
+    
   })
 
 };
