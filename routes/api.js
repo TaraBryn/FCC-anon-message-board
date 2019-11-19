@@ -59,12 +59,15 @@ module.exports = function (app, db) {
           _id, 
           created_on, 
           bumped_on, 
-          text, 
+          text,
+          replycount: replies.length,
           replies: replies.slice(2)
         }
       })
       .sort((a,b)=>new Date(a.bumped_on)-new Date(b.bumped_on))
-      res.json(val.length > 10 ? val.slice(9) : val);
+      if (val.length > 10) val.splice(9);
+      //console.log(val);
+      res.json(val);
     })
     .catch(err=>res.json(err))
   })
