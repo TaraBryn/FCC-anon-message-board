@@ -35,6 +35,7 @@ module.exports = function (app, db) {
               bumped_on: new Date(),
               text: req.body.text,
               password: hash,
+              reported: false,
               replies: []
             }
           }
@@ -50,7 +51,11 @@ module.exports = function (app, db) {
     var board = req.params.board;
     db.collection('boards').findOne({board},{})
     .then(data => {
-      console.log(data)
+      //console.log(data)
+      res.json = 
+      data.threads.map(e=>{
+        var {_id, created_on, bumped_on, text, replies}
+      })
     })
     .catch(err=>res.json(err))
   })
@@ -72,7 +77,8 @@ module.exports = function (app, db) {
               _id: new ObjectId(),
               crated_on: new Date(),
               text: req.body.text,
-              password: hash
+              password: hash,
+              reported: false
             }
           },
           $set: {bumped_on: new Date()}
