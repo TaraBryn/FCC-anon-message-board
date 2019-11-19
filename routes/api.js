@@ -45,6 +45,13 @@ module.exports = function (app, db) {
       .catch(err=>res.json(err))
     })
   })
+  
+  .get(function(req, res){
+    var board = req.params.board;
+    db.collection('boards').findMany(
+      {board}
+    )
+  })
     
   app.route('/api/replies/:board')
   
