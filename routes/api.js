@@ -54,15 +54,14 @@ module.exports = function (app, db) {
       //console.log(data)
       //res.json = 
       var val = data.threads.map(e=>{
-        var {_id, created_on, bumped_on, replies} = e;
-        var text = e.reply_text;
+        var {_id, created_on, bumped_on, text, replies} = e;
         return {
           _id, 
           created_on, 
           bumped_on, 
           text,
           replycount: replies.length,
-          replies: replies.length > 3 ? replies.slice(2) : replies
+          replies: replies.length > 3 ? replies.slice(2) 
         }
       })
       .sort((a,b)=>new Date(a.bumped_on)-new Date(b.bumped_on))
@@ -80,6 +79,7 @@ module.exports = function (app, db) {
         _id = req.body.thread_id,
         text = req.body.reply_text,
         password = req.body.delete_password;
+    console.log(req.body);
     bcrypt.hash(password, saltRounds, (err, hash) => {
       db.collection('boards')
       .updateOne(
