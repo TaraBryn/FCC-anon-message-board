@@ -56,7 +56,7 @@ module.exports = function (app, db) {
       var val = data.threads.map(e=>{
         var {_id, created_on, bumped_on, text, replies} = e;
         var replycount = replies.length;
-        replies = replies.sort((a,b)=>new Date(b.created_on)-new Date(a.created_on))
+        replies = replies.sort((a,b)=>b.created_on-a.created_on)
         if (replies.length > 3) replies.splice(3);
         //console.log(replies)
         return {_id, created_on, bumped_on, text, replycount, replies}
