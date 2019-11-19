@@ -61,7 +61,7 @@ module.exports = function (app, db) {
         //console.log(replies)
         return {_id, created_on, bumped_on, text, replycount, replies}
       })
-      .sort((a,b)=>new Date(b.bumped_on)-new Date(a.bumped_on))
+      .sort((a,b)=>b.bumped_on-a.bumped_on)
       if (val.length > 10) val.splice(9);
       //console.log(val);
       res.json(val);
@@ -84,6 +84,7 @@ module.exports = function (app, db) {
           'threads._id': ObjectId(_id)
         },
         {
+          $set: {bumped_on: new Date()},
           $push: {
             'threads.$.replies': {
               _id: new ObjectId(),
@@ -92,8 +93,7 @@ module.exports = function (app, db) {
               password: hash,
               reported: false
             }
-          },
-          $set: {bumped_on: new Date()}
+          }
         }
       )
       .then(()=>res.redirect(`/b/${board}/${_id}`))
