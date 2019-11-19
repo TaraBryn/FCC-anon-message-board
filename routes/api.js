@@ -53,11 +53,15 @@ module.exports = function (app, db) {
     bcrypt.hash(req.body.delete_password, saltRounds, (err, hash) => {
       db.collection('boards')
       .updateOne(
-        {board},
+        {
+          board,
+          'threads._id': ObjectId(req.replies._id)
+        },
         {
           $push: {
-            threads: {
+            'threads.$.replies': {
               _id: new ObjectId(),
+              crated_on: new Date(),
               text: req.body.text,
               password: hash
             }
