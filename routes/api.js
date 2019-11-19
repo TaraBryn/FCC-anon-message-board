@@ -52,8 +52,8 @@ module.exports = function (app, db) {
     db.collection('boards').findOne({board},{})
     .then(data => {
       //console.log(data)
-      res.json = 
-      data.threads.map(e=>{
+      //res.json = 
+      var val = data.threads.map(e=>{
         var {_id, created_on, bumped_on, text, replies} = e;
         return {
           _id, 
@@ -63,7 +63,8 @@ module.exports = function (app, db) {
           replies: replies.slice(2)
         }
       })
-      .sort((a,b))
+      .sort((a,b)=>new Date(a.bumped_on)-new Date(b.bumped_on))
+      res.json(val.length > 10 ? val.slice(9) : val);
     })
     .catch(err=>res.json(err))
   })
