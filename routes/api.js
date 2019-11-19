@@ -17,15 +17,17 @@ const saltRounds = 12;
 module.exports = function (app, db) {
   
   app.route('/api/threads/:board')
+  
   .post(function(req, res){
     var board = req.params.board;
-    console.log(req.body);
     bcrypt.hash(req.body.delete_password, saltRounds, (err, hash) => {
       db.collection('boards').updateOne(
         {board},
         {
           $setOnInsert: {
-            board
+            board,
+            created_on: new Date(),
+            bumped_on: new Date()
           },
           $push: {
             threads: {
@@ -38,11 +40,16 @@ module.exports = function (app, db) {
         },
         {upsert: true}
       )
-      .then(()=>app.redirect('/b/' + board))
-      .catch(err=>console.log(err))
+      .then(()=>res.redirect('/b/' + board))
+      .catch(err=>res.json(err))
     })
   })
     
-  app.route('/api/replies/:board');
+  app.route('/api/replies/:board')
+  
+  .post(function(req, res){
+    db.collection('boards')
+    .updateOne({})
+  })
 
 };
