@@ -26,12 +26,13 @@ module.exports = function (app, db) {
         {
           $setOnInsert: {
             board,
-            created_on: new Date(),
-            bumped_on: new Date()
+            created_on: new Date()
           },
           $push: {
             threads: {
               _id: new ObjectId(),
+              created_on: new Date(),
+              bumped_on: new Date(),
               text: req.body.text,
               password: hash,
               replies: []
@@ -49,12 +50,21 @@ module.exports = function (app, db) {
   
   .post(function(req, res){
     var board = req.params.board;
-    db.collection('boards')
-    .updateOne(
-      {board},
-      {
-        
-      })
+    bcrypt.hash(req.body.delete_password, saltRounds, (err, hash) => {
+      db.collection('boards')
+      .updateOne(
+        {board},
+        {
+          $push: {
+            threads: {
+              _id: new ObjectId(),
+              text: req.body.text,
+              password: hash
+            }
+          }
+        }
+      )
+    })
   })
 
 };
