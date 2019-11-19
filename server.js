@@ -31,6 +31,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 MongoClient.connect(process.env.DB, {useUnifiedTopology: true}, function(err, client){
   
+  //Routing for API 
+  apiRoutes(app, client.db('anon_msg_board'));
+  
   //Sample front-end
   app.route('/b/:board/')
     .get(function (req, res) {
@@ -53,9 +56,6 @@ MongoClient.connect(process.env.DB, {useUnifiedTopology: true}, function(err, cl
       .type('text')
       .send('Not Found');
   });
-  
-  //Routing for API 
-  apiRoutes(app, client.db('anon_msg_board'));
   
 })
 
