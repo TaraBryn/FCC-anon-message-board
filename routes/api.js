@@ -20,8 +20,8 @@ module.exports = function (app, db) {
   .post(function(req, res){
     var board = req.params.board;
     bcrypt.hash(req.body.password, saltRounds, (err, hash) => {
-      db.collection('boards').updateOne(
-        {board},
+      db.collection('boards').findAndModify(
+        {board}, {},
         {
           $setOnInsert: {
             board,
@@ -35,9 +35,10 @@ module.exports = function (app, db) {
               replies: []
             }
           }
-        }
+        },
+        {upsert: true},
+        (err, doc)=>res.redirect('/b/' + board)
       )
-      .then(()=>res.redirect('/b/' + board))
     })
   })
     
