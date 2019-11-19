@@ -18,23 +18,26 @@ module.exports = function (app, db) {
   
   app.route('/api/threads/:board')
   .post(function(req, res){
+    var board = req.params.board;
     bcrypt.hash(req.body.password, saltRounds, (err, hash) => {
       db.collection('boards').updateOne(
-        {board: req.params.board},
+        {board},
         {
           $setOnInsert: {
-            board: req.params.board,
-            messgae: req.body.text,
-            password: hash,
+            board,
             threads: []
           },
           $push: {
             threads: {
-              
+              _id: new ObjectId(),
+              text: req.body.text,
+              password: hash,
+              replies: []
             }
           }
         }
       )
+      .then(()=>res.redirect('/b/' + board))
     })
   })
     
