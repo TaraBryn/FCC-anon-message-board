@@ -48,15 +48,9 @@ module.exports = function (app, db) {
   
   .get(function(req, res){
     var board = req.params.board;
-    db.collection('boards').findMany(
-      {board},
-      {}
-    )
-    .sort({'board.threads.created_on': -1})
-    .limit(10)
-    .toArray()
+    db.collection('boards').findOne({board},{})
     .then(data => {
-      
+      console.log(data);
     })
     .catch(err=>res.json(err))
   })
