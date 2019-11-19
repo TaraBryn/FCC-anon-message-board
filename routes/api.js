@@ -48,7 +48,7 @@ module.exports = function (app, db) {
   
   .get(function(req, res){
     var board = req.params.board;
-    console.log(board)
+    console.log(req.params)
     db.collection('boards').findOne({board},{})
     .then(data => {
       console.log(data);
