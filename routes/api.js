@@ -48,8 +48,13 @@ module.exports = function (app, db) {
   app.route('/api/replies/:board')
   
   .post(function(req, res){
+    var board = req.params.board;
     db.collection('boards')
-    .updateOne({})
+    .updateOne(
+      {board},
+      {
+        
+      })
   })
 
 };
