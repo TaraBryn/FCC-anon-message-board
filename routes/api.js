@@ -54,8 +54,16 @@ module.exports = function (app, db) {
       //console.log(data)
       res.json = 
       data.threads.map(e=>{
-        var {_id, created_on, bumped_on, text, replies}
+        var {_id, created_on, bumped_on, text, replies} = e;
+        return {
+          _id, 
+          created_on, 
+          bumped_on, 
+          text, 
+          replies: replies.slice(2)
+        }
       })
+      .sort((a,b))
     })
     .catch(err=>res.json(err))
   })
