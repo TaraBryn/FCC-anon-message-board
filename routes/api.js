@@ -55,7 +55,7 @@ module.exports = function (app, db) {
       .updateOne(
         {
           board,
-          'threads._id': ObjectId(req.replies._id)
+          'threads._id': ObjectId(req.body._id)
         },
         {
           $push: {
@@ -69,7 +69,7 @@ module.exports = function (app, db) {
           $set: {bumped_on: new Date()}
         }
       )
-      .then(()=>res.redirect('/b/'))
+      .then(()=>res.redirect(`/b/${board}/${req.body._id}`))
       .catch(err=>res.json(err))
     })
   })
