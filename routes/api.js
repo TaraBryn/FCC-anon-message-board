@@ -55,16 +55,15 @@ module.exports = function (app, db) {
       //res.json = 
       var val = data.threads.map(e=>{
         var {_id, created_on, bumped_on, text, replies} = e;
-        return {
-          _id, 
-          created_on, 
-          bumped_on, 
-          text,
-          replycount: replies.length,
-          replies: replies.length > 3 ? replies.slice(2) : replies
-        }
+        var replycount = replies.length;
+        replies = replies.sort((a,b)=>{
+          a.created_on-b.created_on
+        })
+        if (replies.length > 3) replies.splice(3);
+        //console.log(replies)
+        return {_id, created_on, bumped_on, text, replycount, replies}
       })
-      .sort((a,b)=>new Date(a.bumped_on)-new Date(b.bumped_on))
+      .sort((a,b)=>new Date(b.bumped_on)-new Date(a.bumped_on))
       if (val.length > 10) val.splice(9);
       //console.log(val);
       res.json(val);
