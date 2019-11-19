@@ -61,7 +61,7 @@ module.exports = function (app, db) {
           bumped_on, 
           text,
           replycount: replies.length,
-          replies: replies.length > 3 ? replies.slice(2) 
+          replies: replies.length > 3 ? replies.slice(2) : replies
         }
       })
       .sort((a,b)=>new Date(a.bumped_on)-new Date(b.bumped_on))
@@ -77,9 +77,8 @@ module.exports = function (app, db) {
   .post(function(req, res){
     var board = req.params.board,
         _id = req.body.thread_id,
-        text = req.body.reply_text,
+        text = req.body.text,
         password = req.body.delete_password;
-    console.log(req.body);
     bcrypt.hash(password, saltRounds, (err, hash) => {
       db.collection('boards')
       .updateOne(
