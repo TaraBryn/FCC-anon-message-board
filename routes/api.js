@@ -65,9 +65,12 @@ module.exports = function (app, db) {
               text: req.body.text,
               password: hash
             }
-          }
+          },
+          $set: {bumped_on: new Date()}
         }
       )
+      .then(()=>res.redirect('/b/'))
+      .catch(err=>res.json(err))
     })
   })
 
