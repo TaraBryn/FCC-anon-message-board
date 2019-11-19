@@ -41,17 +41,16 @@ module.exports = function (app, db) {
         },
         {upsert: true}
       )
-      .then(()=>res.redirect('/b/' + board))
+      .then(()=>res.redirect('/b/' + board + '/'))
       .catch(err=>res.json(err))
     })
   })
   
   .get(function(req, res){
     var board = req.params.board;
-    console.log(req.params)
+    console.log(board)
     db.collection('boards').findOne({board},{})
     .then(data => {
-      console.log(data);
     })
     .catch(err=>res.json(err))
   })
