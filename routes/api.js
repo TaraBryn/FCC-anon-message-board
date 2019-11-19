@@ -86,6 +86,7 @@ module.exports = function (app, db) {
         {
           $set: {bumped_on: new Date()},
           $push: {
+            threads: {bumped_on: new Date()},
             'threads.$.replies': {
               _id: new ObjectId(),
               created_on: new Date(),
