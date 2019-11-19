@@ -49,8 +49,16 @@ module.exports = function (app, db) {
   .get(function(req, res){
     var board = req.params.board;
     db.collection('boards').findMany(
-      {board}
+      {board},
+      {}
     )
+    .sort({'board.threads.created_on': -1})
+    .limit(10)
+    .toArray()
+    .then(data => {
+      
+    })
+    .catch(err=>res.json(err))
   })
     
   app.route('/api/replies/:board')
