@@ -54,14 +54,15 @@ module.exports = function (app, db) {
       //console.log(data)
       //res.json = 
       var val = data.threads.map(e=>{
-        var {_id, created_on, bumped_on, text, replies} = e;
+        var {_id, created_on, bumped_on, replies} = e;
+        var text = e.reply_text;
         return {
           _id, 
           created_on, 
           bumped_on, 
           text,
           replycount: replies.length,
-          replies: replies.slice(2)
+          replies: replies.length > 3 ? replies.slice(2) : replies
         }
       })
       .sort((a,b)=>new Date(a.bumped_on)-new Date(b.bumped_on))
