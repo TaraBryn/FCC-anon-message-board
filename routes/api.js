@@ -19,13 +19,13 @@ module.exports = function (app, db) {
   app.route('/api/threads/:board')
   .post(function(req, res){
     var board = req.params.board;
-    bcrypt.hash(req.body.password, saltRounds, (err, hash) => {
+    console.log(req.body);
+    bcrypt.hash(req.body.delete_password, saltRounds, (err, hash) => {
       db.collection('boards').updateOne(
         {board},
         {
           $setOnInsert: {
-            board,
-            threads: []
+            board
           },
           $push: {
             threads: {
@@ -38,7 +38,7 @@ module.exports = function (app, db) {
         },
         {upsert: true}
       )
-      .then(()=>console.log('test'))
+      .then(()=>app.redirect('/b/' + board))
       .catch(err=>console.log(err))
     })
   })
