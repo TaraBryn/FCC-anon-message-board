@@ -30,7 +30,6 @@
 var cors = require('cors');
 var fs = require('fs');
 var runner = require('../test-runner');
-const bcrypt = require('bcrypt');
 
 module.exports = function (app) {
 
