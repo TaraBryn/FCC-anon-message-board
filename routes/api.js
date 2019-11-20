@@ -109,9 +109,13 @@ module.exports = function (app, db) {
   .get(function(req, res){
     var board = req.params.board;
     db.collection('boards')
-    .findOne({board, 'threads._id': req.query.thread_id})
+    .findOne({board, 'threads._id': ObjectId(req.query.thread_id)})
     .then(data=>{
-      
+      res.json(data.threads.map(e=>{
+        var {_id, created_on, bumped_on, text, replies} = e,
+            replycount = replies.length;
+        return {_id, created_on, bumped_on, text, replycount, replies}
+      })[0])
     })
     .catch(err=>res.json(err))
   })
