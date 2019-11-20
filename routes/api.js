@@ -64,6 +64,17 @@ module.exports = function (app, db) {
     })
     .catch(err=>res.json(err))
   })
+  
+  .delete(function(req, res){
+    var board = req.params.board,
+        _id = ObjectId(req.body.thread_id),
+        password = req.body.delete_password;
+    db.collection('boards')
+    .findOne({board, _id})
+    .then(data=>{
+      brypt.compare(password, data.threads[0].password, function(err, compRes))
+    })
+  })
     
   app.route('/api/replies/:board')
   
