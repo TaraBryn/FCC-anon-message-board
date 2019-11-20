@@ -144,20 +144,29 @@ module.exports = function (app, db) {
         password = req.body.delete_password,
         thread_id = ObjectId(req.body.thread_id),
         reply_id = ObjectId(req.body.reply_id),
-        filter = {board, 'threads._id': thread_id, 'threads.replies._id': reply_id};
-    console.log(filter)
+        filter = {board, 'threads._id': thread_id};
     db.collection('boards').findOne(filter)
     .then(data=>{
       bcrypt.compare(password, data.threads[0].replies[0].password, function(err, compRes){
         if (err) return res.json(err);
         if (!compRes) return res.send('incorrect password');
-        db.collection('boards')
+        //the below code does not work, there is an open ticket for it: 
+        //https://stackoverflow.com/questions/24046470/mongodb-too-many-positional-i-e-elements-found-in-path
+        /*db.collection('boards')
         .updateOne(
           filter,
           {$set: {'threads.$.replies.$.text': '[deleted]'}}
         )
         .then(()=>res.send('success'))
-        .catch(err=>console.log(err))
+        .catch(err=>console.log(err))*/
+        var thread = data.threads.filter(e=>e._id == thread_id)[0],
+            replies = thread.replies.map(e=>e._id == reply_id ? Object.assign(e,{text: '[deleted]'}) : e);
+        db.updateOne(
+          filter,
+          {$set: {'threads.$.replies': replies}}
+        )
+        .then(res.send('success'))
+        .catch(err=>res.json(err))
       })
     })
     .catch(err=>res.json(err));
