@@ -83,6 +83,10 @@ module.exports = function (app, db) {
     })
     .catch(err=>res.json(err))
   })
+  
+  .put(function(req, res){
+    db.collection('board')
+  })
     
   app.route('/api/replies/:board')
   
