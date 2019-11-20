@@ -75,7 +75,7 @@ module.exports = function (app, db) {
       bcrypt.compare(password, data.threads[0].password, function(err, compRes){
         if (err) return res.json(err);
         if (!compRes) return res.send('incorrect password');
-        db.collectino('boards')
+        db.collection('boards')
         .updateOne({board}, {$pull: {threads: {_id}}})
         .then(res.send('success'))
         .catch(err=>res.json(err))
@@ -137,6 +137,19 @@ module.exports = function (app, db) {
       })[0])
     })
     .catch(err=>res.json(err))
+  })
+  
+  .delete(function(req, res){
+    var board = req.params.board,
+        password = req.body.delete_password,
+        thread_id = ObjectId(req.body.thread_id),
+        reply_id = ObjectId(req.body.reply_id);
+    db.collection('boards')
+      .findOne({board, 'threads._id': thread_id, 'threads.replies._id': reply_id})
+    .then(data=>{
+      bcrypt.compare
+    })
+    catch(err=>res.json(err));
   })
 
 };
