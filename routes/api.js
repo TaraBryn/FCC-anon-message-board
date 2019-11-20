@@ -157,7 +157,7 @@ module.exports = function (app, db) {
           {$set: {'threads.$.replies.$.text': '[deleted]'}}
         )
         .then(()=>res.send('success'))
-        .catch(err=>res.json(err))
+        .catch(err=>console.log(err))
       })
     })
     .catch(err=>res.json(err));
