@@ -70,10 +70,18 @@ module.exports = function (app, db) {
         _id = ObjectId(req.body.thread_id),
         password = req.body.delete_password;
     db.collection('boards')
-    .findOne({board, _id})
+    .findOne({board, 'threads._id': _id})
     .then(data=>{
-      brypt.compare(password, data.threads[0].password, function(err, compRes))
+      bcrypt.compare(password, data.threads[0].password, function(err, compRes){
+        if (err) return res.json(err);
+        if (!compRes) return res.send('incorrect password');
+        db.collectino('boards')
+        .updateOne({board}, {$pull: {threads: {_id}}})
+        .then(res.send('success'))
+        .catch(err=>res.json(err))
+      })
     })
+    .catch(err=>res.json(err))
   })
     
   app.route('/api/replies/:board')
