@@ -98,7 +98,10 @@
             type: "DELETE",
             url: url,
             data: $(this).serialize(),
-            success: function(data) { alert(data) }
+            success: function(data) {
+              location.reload();
+              alert(data);
+            }
           });
           e.preventDefault();
         });        
@@ -108,7 +111,10 @@
             type: "DELETE",
             url: url,
             data: $(this).serialize(),
-            success: function(data) { alert(data) }
+            success: function(data) {
+              location.reload();
+              alert(data);
+            }
           });
           e.preventDefault();
         });              
