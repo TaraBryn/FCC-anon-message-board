@@ -86,9 +86,8 @@ module.exports = function (app, db) {
   
   .put(function(req, res){
     var board = req.params.board,
-        _id = ObjectId(req.body.thread_id);
-    console.log(board, _id);
-    db.collection('board')
+        _id = ObjectId(req.body.report_id);
+    db.collection('boards')
     .updateOne(
       {board, 'threads._id': _id},
       {$set: {'threads.$.reported': true}}
@@ -183,6 +182,16 @@ module.exports = function (app, db) {
       })
     })
     .catch(err=>res.json(err));
+  })
+  
+  .put(function(req, res){
+    var board = req.params.board,
+        thread_id = ObjectId(req.body.thread_id),
+        reply_id = ObjectId(req.body.reply_id)
+    db.collection('boards').findOne({body})
+    .then(data=>{
+      
+    })
   })
 
 };
