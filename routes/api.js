@@ -96,6 +96,12 @@ module.exports = function (app, db) {
                 }
               }
             }
+          },
+          {
+            updateOne: {
+              filter,
+              update: {$set: {'threads.$.bumped_on':new Date()}}
+            }
           }
         ]
       )
