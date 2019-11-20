@@ -51,19 +51,15 @@ module.exports = function (app, db) {
     var board = req.params.board;
     db.collection('boards').findOne({board},{})
     .then(data => {
-      //console.log(data)
-      //res.json = 
       var val = data.threads.map(e=>{
         var {_id, created_on, bumped_on, text, replies} = e;
         var replycount = replies.length;
         replies = replies.sort((a,b)=>b.created_on-a.created_on)
         if (replies.length > 3) replies.splice(3);
-        //console.log(replies)
         return {_id, created_on, bumped_on, text, replycount, replies}
       })
       .sort((a,b)=>b.bumped_on-a.bumped_on)
       if (val.length > 10) val.splice(9);
-      //console.log(val);
       res.json(val);
     })
     .catch(err=>res.json(err))
@@ -111,7 +107,13 @@ module.exports = function (app, db) {
   })
   
   .get(function(req, res){
-    
+    var board = req.params.board;
+    db.collection('boards')
+    .findOne({board, 'threads._id': req.query.thread_id})
+    .then(data=>{
+      
+    })
+    .catch(err=>res.json(err))
   })
 
 };
