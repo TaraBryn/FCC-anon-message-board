@@ -72,7 +72,8 @@ module.exports = function (app, db) {
     db.collection('boards')
     .findOne({board, 'threads._id': _id})
     .then(data=>{
-      bcrypt.compare(password, data.threads[0].password, function(err, compRes){
+      var thread = data.threads.filter(e=>e._id.toString() == _id.toString())[0]
+      bcrypt.compare(password, thread.password, function(err, compRes){
         if (err) return res.json(err);
         if (!compRes) return res.send('incorrect password');
         db.collection('boards')
@@ -159,7 +160,8 @@ module.exports = function (app, db) {
         filter = {board, 'threads._id': thread_id};
     db.collection('boards').findOne(filter)
     .then(data=>{
-      bcrypt.compare(password, data.threads[0].replies[0].password, function(err, compRes){
+      var thread = data.threads.filter(e=>e._id.toString() == thread_id.toString())[0];
+      bcrypt.compare(password, thread.password, function(err, compRes){
         if (err) return res.json(err);
         if (!compRes) return res.send('incorrect password');
         //the below code does not work, there is an open ticket for it: 
@@ -177,8 +179,8 @@ module.exports = function (app, db) {
           filter,
           {$set: {'threads.$.replies': replies}}
         )
-        .then(res.send('success'))
-        .catch(err=>res.json(err))
+        .then(result=>result.modifiedCount > 0 ? res.send('success') : res.send('failure'))
+        .catch(err=>res.send(err))
       })
     })
     .catch(err=>res.json(err));
@@ -187,10 +189,18 @@ module.exports = function (app, db) {
   .put(function(req, res){
     var board = req.params.board,
         thread_id = ObjectId(req.body.thread_id),
-        reply_id = ObjectId(req.body.reply_id)
-    db.collection('boards').findOne({body})
+        reply_id = ObjectId(req.body.reply_id),
+        filter = {board, 'threads._id': thread_id}
+    db.collection('boards').findOne(filter)
     .then(data=>{
-      
+      var thread = data.threads.filter(e=>e._id.toString() == thread_id.toString())[0],
+          replies = thread.replies.map(e=>e._id.toString() == reply_id.toString() ? Object.assign(e, {reported: true}) : e);
+      db.collection('boards').updateOne(
+        filter,
+        {$set: {'threads.$.replies': replies}}
+      )
+      .then(result=>result.modifiedCount > 0 ? res.send('success') : res.send('invalid _id'))
+      .catch(err=>res.json(err))
     })
   })
 
