@@ -159,9 +159,9 @@ module.exports = function (app, db) {
         )
         .then(()=>res.send('success'))
         .catch(err=>console.log(err))*/
-        var thread = data.threads.filter(e=>e._id == thread_id)[0],
-            replies = thread.replies.map(e=>e._id == reply_id ? Object.assign(e,{text: '[deleted]'}) : e);
-        db.updateOne(
+        var thread = data.threads.filter(e=>e._id.toString() == thread_id.toString())[0];
+        var replies = thread.replies.map(e=>e._id.toString() == reply_id.toString() ? Object.assign(e,{text: '[deleted]'}) : e);
+        db.collection('boards').updateOne(
           filter,
           {$set: {'threads.$.replies': replies}}
         )
