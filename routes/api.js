@@ -85,7 +85,16 @@ module.exports = function (app, db) {
   })
   
   .put(function(req, res){
+    var board = req.params.board,
+        _id = ObjectId(req.body.thread_id);
+    console.log(board, _id);
     db.collection('board')
+    .updateOne(
+      {board, 'threads._id': _id},
+      {$set: {'threads.$.reported': true}}
+    )
+    .then(e=>e.modifiedCount > 0 ? res.send('success') : res.send('invalid id'))
+    .catch(err=>res.json(err))
   })
     
   app.route('/api/replies/:board')
