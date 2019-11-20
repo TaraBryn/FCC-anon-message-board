@@ -143,13 +143,24 @@ module.exports = function (app, db) {
     var board = req.params.board,
         password = req.body.delete_password,
         thread_id = ObjectId(req.body.thread_id),
-        reply_id = ObjectId(req.body.reply_id);
-    db.collection('boards')
-      .findOne({board, 'threads._id': thread_id, 'threads.replies._id': reply_id})
+        reply_id = ObjectId(req.body.reply_id),
+        filter = {board, 'threads._id': thread_id, 'threads.replies._id': reply_id};
+    console.log(filter)
+    db.collection('boards').findOne(filter)
     .then(data=>{
-      bcrypt.compare
+      bcrypt.compare(password, data.threads[0].replies[0].password, function(err, compRes){
+        if (err) return res.json(err);
+        if (!compRes) return res.send('incorrect password');
+        db.collection('boards')
+        .updateOne(
+          filter,
+          {$set: {'threads.$.replies.$.text': '[deleted]'}}
+        )
+        .then(()=>res.send('success'))
+        .catch(err=>res.json(err))
+      })
     })
-    catch(err=>res.json(err));
+    .catch(err=>res.json(err));
   })
 
 };
