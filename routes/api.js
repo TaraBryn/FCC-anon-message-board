@@ -75,27 +75,29 @@ module.exports = function (app, db) {
     var board = req.params.board,
         _id = req.body.thread_id,
         text = req.body.text,
-        password = req.body.delete_password;
+        password = req.body.delete_password,
+        filter = {board, 'threads._id': ObjectId(_id)};
     bcrypt.hash(password, saltRounds, (err, hash) => {
       db.collection('boards')
-      .updateOne(
-        {
-          board,
-          'threads._id': ObjectId(_id)
-        },
-        {
-          $set: {bumped_on: new Date()},
-          $push: {
-            threads: {bumped_on: new Date()},
-            'threads.$.replies': {
-              _id: new ObjectId(),
-              created_on: new Date(),
-              text,
-              password: hash,
-              reported: false
+      .bulkWrite(
+        [
+          {
+            updateOne: {
+              filter,
+              update: {
+                $push: {
+                  'threads.$.replies': {
+                    _id: new ObjectId(),
+                    created_on: new Date(),
+                    text,
+                    password: hash,
+                    reported: false
+                  }
+                }
+              }
             }
           }
-        }
+        ]
       )
       .then(()=>res.redirect(`/b/${board}/${_id}`))
       .catch(err=>res.json(err))
